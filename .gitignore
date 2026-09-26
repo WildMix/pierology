@@ -2,6 +2,12 @@ node_modules/
 .work/
 test-results/
 *.log
+dist/
+.wrangler/
+.dev.vars*
+.env*
+!.env.example
+.idea/
 
 # Films are hosted on YouTube; keep local exports out of Git.
 *.mp4

@@ -6,10 +6,14 @@
   "scripts": {
     "dev": "node server.mjs",
     "start": "node server.mjs",
-    "check": "node --check app.js && node --check content.js && node --check server.mjs",
+    "build": "node scripts/build.mjs",
+    "deploy": "npm run build && wrangler deploy",
+    "deploy:check": "npm run build && wrangler deploy --dry-run",
+    "check": "node --check app.js && node --check content.js && node --check server.mjs && node --check scripts/build.mjs",
     "test": "node scripts/check-site.mjs"
   },
   "devDependencies": {
-    "playwright": "^1.63.0"
+    "playwright": "^1.63.0",
+    "wrangler": "4.141.0"
   }
 }

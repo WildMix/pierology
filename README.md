@@ -1,6 +1,6 @@
 # Pierology
 
-A complete, responsive editorial website for the fictional faith of Pierology. Plain HTML, CSS, and JavaScript, with a small Node server. No runtime dependencies, accounts, database, or build step.
+A complete, responsive editorial website for the fictional faith of Pierology. Plain HTML, CSS, and JavaScript, with a small Node server for local development. No runtime dependencies, accounts, or database. The production build copies the public site files into `dist/`.
 
 ## Run locally
 
@@ -30,10 +30,39 @@ Open **http://localhost:4173**. To choose another port, set `$env:PORT` before s
 | `styles.css` | Desktop, tablet, and mobile layouts |
 | `assets/` | Local photographs, fonts, and emblem |
 | `server.mjs` | Local static server, media range requests, and public-file allowlist |
+| `scripts/build.mjs` | Packages only the public site and small audio loop into `dist/` |
+| `wrangler.jsonc` | Cloudflare Worker name, compatibility date, and static asset directory |
 
 The audio-only page uses `piero-loop.wav` (about 480 KB), which must be included in Git and in deployments. The small original `piero.ogg` can also be committed. Local video exports are ignored by Git and are not served or required by the website. The film uses YouTube video ID `4GpNXT_PuXU` in `app.js`.
 
-Navigation uses URL hashes, so the static site does not need server-side route rewrites. For public hosting, serve `index.html`, `styles.css`, `app.js`, `content.js`, `assets/`, and `piero-loop.wav`. No local video files need to be uploaded. The website itself has not been published.
+Navigation uses URL hashes, so the static site does not need server-side route rewrites. For public hosting, use the output from `npm run build`. It includes the HTML, CSS, JavaScript, public images and fonts, and `piero-loop.wav`. Video exports, source scripts, dependencies, and repository metadata are excluded.
+
+## Cloudflare deployment on push
+
+`wrangler.jsonc` targets the existing **pierology** Worker and serves `dist/` as Workers Static Assets. Cloudflare's native Git integration triggers the deployment; a GitHub Actions workflow is not required.
+
+In the connected Worker's **Settings → Builds**, use:
+
+| Setting | Value |
+| --- | --- |
+| Git repository | `WildMix/pierology` |
+| Production branch | `master` |
+| Root directory | Repository root (`/`) |
+| Build command | `npm run build` |
+| Deploy command | `npx wrangler deploy` |
+
+After these configuration files are committed and pushed to `master`, the connected Cloudflare build runs the build command and deploys the resulting static site. Cloudflare supplies deployment authentication through the repository connection; do not put API tokens in the repository. Wrangler is pinned in `package.json` and `package-lock.json`.
+
+For local checks without publishing:
+
+```powershell
+npm run check
+npm run deploy:check
+```
+
+`deploy:check` builds the files and runs `wrangler deploy --dry-run`. For an intentional manual deployment, `npm run deploy` builds and publishes using your local Cloudflare authentication.
+
+The connected production branch and build commands are dashboard settings, not fields in `wrangler.jsonc`. See [Cloudflare's Workers Builds configuration](https://developers.cloudflare.com/workers/ci-cd/builds/configuration/).
 
 ## Suggested additions
 
