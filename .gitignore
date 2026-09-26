@@ -1,0 +1,14 @@
+node_modules/
+.work/
+test-results/
+*.log
+
+# Films are hosted on YouTube; keep local exports out of Git.
+*.mp4
+*.m4v
+*.mov
+*.webm
+*.mkv
+*.avi
+
+# Small audio sources, including piero-loop.wav, stay in the repository.
